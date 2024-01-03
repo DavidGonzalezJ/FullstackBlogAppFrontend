@@ -3,6 +3,27 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({type,message}) => {
+  if(message === null) return null
+  let messageStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+  if (type === 'error'){
+    messageStyle.color = 'red'
+  }
+  return(
+    <div style={messageStyle}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
@@ -11,6 +32,8 @@ const App = () => {
   const [blogTitle, setBlogTitle] = useState('')
   const [blogAuthor, setBlogAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
+  const [msg, setMsg] = useState(null)
+  const [notificationType, setNotificationType] = useState('notif')
 
 
   async function getBlogs(){
@@ -44,9 +67,17 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      console.log('GOT CORRECT USER')
+      setNotificationType('notif')
+      setMsg(`${user.name} logged in!`)
+      setTimeout(() =>{
+        setMsg(null)
+      }, 5000)
     } catch (exception) {
-      console.log('Wrong credentials')
+      setNotificationType('error')
+      setMsg(`Wrong username or password`)
+      setTimeout(() =>{
+        setMsg(null)
+      }, 5000)
     }
   }
 
@@ -54,7 +85,11 @@ const App = () => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
-    console.log('LOGGED OUT')
+    setNotificationType('notif')
+      setMsg(`Succesfully logged out!`)
+      setTimeout(() =>{
+        setMsg(null)
+      }, 5000)
   }
 
   const handleBlogPost = async(event) => {
@@ -70,9 +105,17 @@ const App = () => {
       setBlogTitle('')
       setBlogUrl('')
       getBlogs()
-      console.log('BLOG POSTED')
+      setNotificationType('notif')
+      setMsg(`The blog ${blogObject.title} by ${blogObject.author} has been added`)
+      setTimeout(() =>{
+        setMsg(null)
+      }, 5000)
     } catch (exception) {
-      console.log(exception)
+      setNotificationType('error')
+      setMsg(`Could not post the blog!`)
+      setTimeout(() =>{
+        setMsg(null)
+      }, 5000)
     }
   }
 
@@ -146,6 +189,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message = {msg} type = {notificationType}/>
       { user !== null && <div>
         <p>{user.name} logged in
         <button onClick={handleLogout}>
