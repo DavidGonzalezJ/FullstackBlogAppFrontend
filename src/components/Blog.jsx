@@ -1,10 +1,11 @@
 import { useState } from "react"
 
-const Blog = ({ blog, likeHandler }) => {
+const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   const [fullView, setfullView] = useState(false)
 
   const hideInFullView = { display: fullView ? 'none' : ''}
   const showInFullView = { display: fullView ? '' : 'none'}
+  const showDeleteButton = blog.user && user.username === blog.user.username
 
   const toggleFullView = () => {
     setfullView(!fullView)
@@ -18,8 +19,22 @@ const Blog = ({ blog, likeHandler }) => {
     marginBottom: 5
   }
 
+  const deleteButtonStyle = {
+    backgroundColor: 'red',
+    color: 'white',
+    border: 'none',
+    padding: '8px 12px',
+    borderRadius: '4px',
+    cursor: 'pointer'
+  }
+
   const thisLikeHandler = () => {
     likeHandler(blog.id)
+  }
+
+  const thisDeleteHandler = () => {
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
+      deleteHandler(blog.id)
   }
 
   return (
@@ -31,7 +46,8 @@ const Blog = ({ blog, likeHandler }) => {
           {blog.url}<br />
           likes {blog.likes} <button style={showInFullView}
             onClick={thisLikeHandler}>like</button> <br />
-          {blog.user && blog.user.name}
+          {blog.user && blog.user.name} <br />
+          {showDeleteButton && <button style={deleteButtonStyle} onClick={thisDeleteHandler}>remove</button>}
         </div>
     </div>  
   )

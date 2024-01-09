@@ -61,6 +61,16 @@ const App = () => {
       notificationRef.current.invokeNotification('error', `Could not process like`)
     }
   }
+
+  const handleDelete = async(id) => {
+    try {
+      await blogService.deleteBlog(id)
+      getBlogs()
+      notificationRef.current.invokeNotification('notif', `Blog deleted successfully`)
+    }catch {
+      notificationRef.current.invokeNotification('error', `Could not delete the blog`)
+    }
+  }
   
   const handleLogout = async(event) => {
     event.preventDefault()
@@ -93,8 +103,10 @@ const App = () => {
 
   const blogList = () => {
       blogs.sort((a, b) => b.likes - a.likes)
+      console.log(user)
       return blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} likeHandler={handleLike}/>)
+        <Blog key={blog.id} blog={blog} likeHandler={handleLike}
+        deleteHandler={handleDelete} user={user}/>)
   }
 
   const loginForm = () => {
