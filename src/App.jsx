@@ -52,6 +52,15 @@ const App = () => {
       notificationRef.current.invokeNotification('error', `Wrong username or password`)
     }
   }
+
+  const handleLike = async(id) => {
+    try {
+      await blogService.like(id)
+      getBlogs()
+    }catch {
+      notificationRef.current.invokeNotification('error', `Could not process like`)
+    }
+  }
   
   const handleLogout = async(event) => {
     event.preventDefault()
@@ -82,10 +91,9 @@ const App = () => {
     }
   }
 
-
   const blogList = () => {
       return blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />)
+        <Blog key={blog.id} blog={blog} likeHandler={handleLike}/>)
   }
 
   const loginForm = () => {
