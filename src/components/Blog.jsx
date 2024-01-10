@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   const [fullView, setfullView] = useState(false)
 
-  const hideInFullView = { display: fullView ? 'none' : ''}
-  const showInFullView = { display: fullView ? '' : 'none'}
+  const hideInFullView = { display: fullView ? 'none' : '' }
+  const showInFullView = { display: fullView ? '' : 'none' }
   const showDeleteButton = blog.user && user.username === blog.user.username
 
   const toggleFullView = () => {
@@ -40,17 +41,23 @@ const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
-        <button style={hideInFullView} onClick={toggleFullView}>view</button>
-        <button style={showInFullView} onClick={toggleFullView}>hide</button>
-        <div style={showInFullView}>
-          {blog.url}<br />
+      <button style={hideInFullView} onClick={toggleFullView}>view</button>
+      <button style={showInFullView} onClick={toggleFullView}>hide</button>
+      <div style={showInFullView}>
+        {blog.url}<br />
           likes {blog.likes} <button style={showInFullView}
-            onClick={thisLikeHandler}>like</button> <br />
-          {blog.user && blog.user.name} <br />
-          {showDeleteButton && <button style={deleteButtonStyle} onClick={thisDeleteHandler}>remove</button>}
-        </div>
-    </div>  
+          onClick={thisLikeHandler}>like</button> <br />
+        {blog.user && blog.user.name} <br />
+        {showDeleteButton && <button style={deleteButtonStyle} onClick={thisDeleteHandler}>remove</button>}
+      </div>
+    </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  likeHandler: PropTypes.func.isRequired,
+  deleteHandler: PropTypes.func.isRequired
 }
 
 export default Blog

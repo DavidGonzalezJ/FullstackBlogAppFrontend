@@ -10,9 +10,9 @@ import Notification from './components/Notification'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  
+
   const notificationRef = useRef()
-  
+
   const notification = () => {
     return(
       <Notification ref={ notificationRef }/>
@@ -27,7 +27,7 @@ const App = () => {
   useEffect(() => {
     getBlogs()
   }, [])
-  
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON){
@@ -37,7 +37,7 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async(username, password) =>{
+  const handleLogin = async(username, password) => {
     try {
       const user = await loginService.login({
         username, password,
@@ -49,7 +49,7 @@ const App = () => {
       setUser(user)
       notificationRef.current.invokeNotification('notif', `${user.name} logged in!`)
     } catch (exception) {
-      notificationRef.current.invokeNotification('error', `Wrong username or password`)
+      notificationRef.current.invokeNotification('error', 'Wrong username or password')
     }
   }
 
@@ -58,7 +58,7 @@ const App = () => {
       await blogService.like(id)
       getBlogs()
     }catch {
-      notificationRef.current.invokeNotification('error', `Could not process like`)
+      notificationRef.current.invokeNotification('error', 'Could not process like')
     }
   }
 
@@ -66,17 +66,17 @@ const App = () => {
     try {
       await blogService.deleteBlog(id)
       getBlogs()
-      notificationRef.current.invokeNotification('notif', `Blog deleted successfully`)
+      notificationRef.current.invokeNotification('notif', 'Blog deleted successfully')
     }catch {
-      notificationRef.current.invokeNotification('error', `Could not delete the blog`)
+      notificationRef.current.invokeNotification('error', 'Could not delete the blog')
     }
   }
-  
+
   const handleLogout = async(event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
-    notificationRef.current.invokeNotification('notif', `Succesfully logged out!`)
+    notificationRef.current.invokeNotification('notif', 'Succesfully logged out!')
   }
 
 
@@ -89,7 +89,7 @@ const App = () => {
       </Togglable>
     )
   }
-  
+
   const addBlog = async(blogObject) => {
     blogFormRef.current.toggleVisibility()
     try {
@@ -97,15 +97,14 @@ const App = () => {
       getBlogs()
       notificationRef.current.invokeNotification('notif', `The blog ${blogObject.title} by ${blogObject.author} has been added`)
     } catch (exception) {
-      notificationRef.current.invokeNotification('error', `Could not post the blog!`)
+      notificationRef.current.invokeNotification('error', 'Could not post the blog!')
     }
   }
 
   const blogList = () => {
-      blogs.sort((a, b) => b.likes - a.likes)
-      console.log(user)
-      return blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} likeHandler={handleLike}
+    blogs.sort((a, b) => b.likes - a.likes)
+    return blogs.map(blog =>
+      <Blog key={blog.id} blog={blog} likeHandler={handleLike}
         deleteHandler={handleDelete} user={user}/>)
   }
 
@@ -122,9 +121,9 @@ const App = () => {
       { notification() }
       { user !== null && <div>
         <p>{user.name} logged in
-        <button onClick={handleLogout}>
+          <button onClick={handleLogout}>
           logout</button>
-          </p>
+        </p>
       </div> }
       { user !== null && blogForm()}
       <br/>

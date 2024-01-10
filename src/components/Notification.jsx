@@ -1,43 +1,45 @@
-import { useState, forwardRef, useImperativeHandle } from "react"
+import { useState, forwardRef, useImperativeHandle } from 'react'
 
 const Notification = forwardRef((props, refs) => {
-    const [msg, setMsg] = useState(null)
-    const [notificationType, setNotificationType] = useState('notif')
+  const [msg, setMsg] = useState(null)
+  const [notificationType, setNotificationType] = useState('notif')
 
-    const invokeNotification = (type, message) => {
-        setNotificationType(type)
-        setMsg(message)
-        setTimeout(() =>{
-            setMsg(null)
-        }, 2500)
+  const invokeNotification = (type, message) => {
+    setNotificationType(type)
+    setMsg(message)
+    setTimeout(() => {
+      setMsg(null)
+    }, 2500)
+  }
+
+  useImperativeHandle(refs, () => {
+    return {
+      invokeNotification
     }
+  })
 
-    useImperativeHandle(refs, () => {
-        return {
-            invokeNotification
-        }
-    })
+  if(msg === null) return null
 
-    if(msg === null) return null
+  let messageStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+  if (notificationType === 'error'){
+    messageStyle.color = 'red'
+  }
 
-    let messageStyle = {
-      color: 'green',
-      background: 'lightgrey',
-      fontSize: 20,
-      borderStyle: 'solid',
-      borderRadius: 5,
-      padding: 10,
-      marginBottom: 10
-    }
-    if (notificationType === 'error'){
-      messageStyle.color = 'red'
-    }
-
-    return(
-      <div style={messageStyle}>
-        {msg}
-      </div>
-    )
+  return(
+    <div style={messageStyle}>
+      {msg}
+    </div>
+  )
 })
+
+Notification.displayName = 'Notification'
 
 export default Notification
