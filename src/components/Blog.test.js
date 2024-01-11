@@ -1,6 +1,7 @@
 import React from 'react'
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 test('Blog renders title and author but not url or likes by default', () => {
@@ -25,3 +26,27 @@ test('Blog renders title and author but not url or likes by default', () => {
   expect(notShown).toHaveTextContent('0')
 
 })
+
+test('Blog renders url and likes if button is pressed', async() => {
+    const blog = {
+      title: 'Miguelin Durain',
+      author: 'Michael J. Fox',
+      url: 'umaite.com/wawawiwa',
+      likes: '0'
+    }
+  
+    const mockHandler = jest.fn()
+  
+    const { container } = render (<Blog blog={blog} likeHandler={mockHandler} deleteHandler={mockHandler}/>)
+  
+    const user = userEvent.setup()
+    const button = screen.getByText('view')
+
+    await user.click(button)
+  
+    const shown = container.querySelector('.blogDetails')
+    expect(shown).not.toHaveStyle('display: none')
+    expect(shown).toHaveTextContent('umaite.com/wawawiwa')
+    expect(shown).toHaveTextContent('0')
+  
+  })
