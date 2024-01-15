@@ -70,7 +70,7 @@ describe('Blog app', function() {
         cy.get('html').should('not.contain','Here is the blog to test')
       })
 
-      it.only('Only the creator can see the remove button', function() {
+      it('Only the creator can see the remove button', function() {
         //New user
         const user2 = {
           name: 'Goty Sr.',
@@ -87,6 +87,31 @@ describe('Blog app', function() {
 
         cy.contains('Here is the blog to test').get('#view-button').click()
         cy.contains('Here is the blog to test').should('not.contain', 'remove')
+      })
+
+      it.only('Blogs are ordered by the number of likes', function() {
+        cy.addBlog({
+          title: 'Blog with 1 like',
+          author: 'David Glez',
+          url: 'oioi.uio/iiuu/popopi1'
+        })
+        cy.addBlog({
+          title: 'Blog with 2 likes',
+          author: 'David Glez',
+          url: 'oioi.uio/iiuu/popopi2'
+        })
+
+        cy.contains('Blog with 1 like').contains('view').click()
+        cy.contains('Blog with 2 likes').contains('view').click()
+        cy.contains('Blog with 1 like').contains('like').click()
+        cy.contains('Blog with 2 likes').contains('like').as('thisButton')
+        cy.get('@thisButton').click()
+        cy.get('@thisButton').click()
+
+        cy.get('.blog').eq(0).should('contain', 'Blog with 2 likes')
+        cy.get('.blog').eq(1).should('contain', 'Blog with 1 like')
+        cy.get('.blog').eq(2).should('contain', 'Here is the blog to test')
+
       })
     })
   })
