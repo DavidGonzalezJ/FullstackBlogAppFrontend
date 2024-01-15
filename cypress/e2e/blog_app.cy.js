@@ -8,7 +8,6 @@ describe('Blog app', function() {
     }
     cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
     cy.visit('')
-    cy.visit('http://localhost:5173')
   })
 
   it('Login form is shown', function() {
@@ -31,6 +30,22 @@ describe('Blog app', function() {
       cy.get('#login-button').click()
       cy.get('html').should('not.contain','Goty Jr. logged in')
       cy.get('#notification').should('exist').should('have.css', 'color', 'rgb(255, 0, 0)')
+    })
+  })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({username: 'gotyjr', password:'gameOfTheYear'})
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('New Blog').click()
+      cy.get('#blog-title').type('Blog de prueba')
+      cy.get('#blog-author').type('Maria Antonieta')
+      cy.get('#blog-url').type('www.mari.es/maria/combo')
+      cy.get('#blog-submit').click()
+
+      cy.contains('Blog de prueba').contains('view')
     })
   })
 })
