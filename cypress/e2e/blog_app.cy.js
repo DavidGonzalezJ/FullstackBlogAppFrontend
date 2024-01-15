@@ -47,5 +47,31 @@ describe('Blog app', function() {
 
       cy.contains('Blog de prueba').contains('view')
     })
+
+    describe('And a blog is created', function() {
+      beforeEach(function() {
+        cy.addBlog({
+          title: 'Here is the blog to test',
+          author: 'David Glez',
+          url: 'oioi.uio/iiuu/popopi'
+        })
+      })
+
+      it('Users can like a blog', function() {
+        cy.contains('Here is the blog to test').get('#view-button').click()
+        cy.contains('likes').contains('0')
+        cy.get('#like-button').click()
+        cy.contains('likes').contains('1')
+      })
+
+      it('User who created the blog can delete it', function() {
+        cy.contains('Here is the blog to test').get('#view-button').click()
+        cy.contains('Here is the blog to test').parent().contains('remove').click()
+        cy.get('html').should('not.contain','Here is the blog to test')
+      })
+
+    })
   })
+
+  
 })
