@@ -70,6 +70,24 @@ describe('Blog app', function() {
         cy.get('html').should('not.contain','Here is the blog to test')
       })
 
+      it.only('Only the creator can see the remove button', function() {
+        //New user
+        const user2 = {
+          name: 'Goty Sr.',
+          username: 'gotysr',
+          password: 'gameOfAllTheYears'
+        }
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, user2)
+
+        cy.contains('Here is the blog to test').get('#view-button').click()
+        cy.contains('remove')
+
+        cy.contains('logout').click()
+        cy.login({username: 'gotysr', password:'gameOfAllTheYears'})
+
+        cy.contains('Here is the blog to test').get('#view-button').click()
+        cy.contains('Here is the blog to test').should('not.contain', 'remove')
+      })
     })
   })
 
