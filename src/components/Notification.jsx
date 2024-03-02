@@ -1,45 +1,30 @@
-import { useState, forwardRef, useImperativeHandle } from "react";
+//import { useState, forwardRef, useImperativeHandle } from "react";
+import { useSelector } from 'react-redux'
 
-const Notification = forwardRef((props, refs) => {
-  const [msg, setMsg] = useState(null);
-  const [notificationType, setNotificationType] = useState("notif");
+const Notification = () => {
+  const notification = useSelector((state) => state.notification)
+  const notificationType = useSelector((state) => state.notificationType)
 
-  const invokeNotification = (type, message) => {
-    setNotificationType(type);
-    setMsg(message);
-    setTimeout(() => {
-      setMsg(null);
-    }, 2500);
-  };
-
-  useImperativeHandle(refs, () => {
-    return {
-      invokeNotification,
-    };
-  });
-
-  if (msg === null) return null;
+  if (notification === '') return null
 
   let messageStyle = {
-    color: "green",
-    background: "lightgrey",
+    color: 'green',
+    background: 'lightgrey',
     fontSize: 20,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
-  };
-  if (notificationType === "error") {
-    messageStyle.color = "red";
+  }
+  if (notificationType === 'error') {
+    messageStyle.color = 'red'
   }
 
   return (
     <div id="notification" style={messageStyle}>
-      {msg}
+      {notification}
     </div>
-  );
-});
+  )
+}
 
-Notification.displayName = "Notification";
-
-export default Notification;
+export default Notification

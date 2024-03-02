@@ -1,128 +1,114 @@
-import { useState, useEffect, useRef } from "react";
-import Blog from "./components/Blog";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
-import BlogForm from "./components/BlogForm";
-import Togglable from "./components/Toggable";
-import LoginForm from "./components/LoginForm";
-import Notification from "./components/Notification";
+import { useState, useEffect, useRef } from 'react'
+import Blog from './components/Blog'
+import blogService from './services/blogs'
+import loginService from './services/login'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Toggable'
+import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
+import { useDispatch } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
+import { setMessageType } from './reducers/notificationTypeReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch()
+  const [blogs, setBlogs] = useState([])
+  const [user, setUser] = useState(null)
 
-  const notificationRef = useRef();
-
-  const notification = () => {
-    return <Notification ref={notificationRef} />;
-  };
+  //This method changes and sets the notification
+  //type and content in the store, the Notification
+  //component uses it to render the message
+  const showNotification = (type, content, time) => {
+    dispatch(setMessageType(type))
+    dispatch(setNotification(content, time))
+  }
 
   async function getBlogs() {
-    const blogs = await blogService.getAll();
-    setBlogs(blogs);
+    const blogs = await blogService.getAll()
+    setBlogs(blogs)
   }
 
   useEffect(() => {
-    getBlogs();
-  }, []);
+    getBlogs()
+  }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
     }
-  }, []);
+  }, [])
 
   const handleLogin = async (username, password) => {
     try {
       const user = await loginService.login({
         username,
         password,
-      });
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
-      notificationRef.current.invokeNotification(
-        "notif",
-        `${user.name} logged in!`,
-      );
+      })
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      setUser(user)
+      showNotification('notif', `${user.name} logged in!`, 3)
     } catch (exception) {
-      notificationRef.current.invokeNotification(
-        "error",
-        "Wrong username or password",
-      );
+      showNotification('error', 'Wrong username or password', 3)
     }
-  };
+  }
 
   const handleLike = async (id) => {
     try {
-      await blogService.like(id);
-      getBlogs();
+      await blogService.like(id)
+      getBlogs()
     } catch {
-      notificationRef.current.invokeNotification(
-        "error",
-        "Could not process like",
-      );
+      showNotification('error', 'Could not process like', 3)
     }
-  };
+  }
 
   const handleDelete = async (id) => {
     try {
-      await blogService.deleteBlog(id);
-      getBlogs();
-      notificationRef.current.invokeNotification(
-        "notif",
-        "Blog deleted successfully",
-      );
+      await blogService.deleteBlog(id)
+      getBlogs()
+      showNotification('notif', 'Blog deleted successfully', 3)
     } catch {
-      notificationRef.current.invokeNotification(
-        "error",
-        "Could not delete the blog",
-      );
+      showNotification('error', 'Could not delete the blog', 3)
     }
-  };
+  }
 
   const handleLogout = async (event) => {
-    event.preventDefault();
-    window.localStorage.removeItem("loggedBlogappUser");
-    setUser(null);
-    notificationRef.current.invokeNotification(
-      "notif",
-      "Succesfully logged out!",
-    );
-  };
+    event.preventDefault()
+    window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
+    showNotification('notif', 'Succesfully logged out!', 3)
+  }
 
-  const blogFormRef = useRef();
+  const blogFormRef = useRef()
 
   const blogForm = () => {
     return (
       <Togglable buttonLabel="New Blog" ref={blogFormRef}>
         <BlogForm addBlog={addBlog} />
       </Togglable>
-    );
-  };
+    )
+  }
 
   const addBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility();
+    blogFormRef.current.toggleVisibility()
     try {
-      await blogService.create(blogObject);
-      getBlogs();
-      notificationRef.current.invokeNotification(
-        "notif",
+      await blogService.create(blogObject)
+      getBlogs()
+      showNotification(
+        'notif',
         `The blog ${blogObject.title} by ${blogObject.author} has been added`,
-      );
+        3,
+      )
     } catch (exception) {
-      notificationRef.current.invokeNotification(
-        "error",
-        "Could not post the blog!",
-      );
+      showNotification('notif', 'Could not post the blog!', 3)
     }
-  };
+  }
 
   const blogList = () => {
-    blogs.sort((a, b) => b.likes - a.likes);
+    blogs.sort((a, b) => b.likes - a.likes)
     return blogs.map((blog) => (
       <Blog
         key={blog.id}
@@ -131,17 +117,17 @@ const App = () => {
         deleteHandler={handleDelete}
         user={user}
       />
-    ));
-  };
+    ))
+  }
 
   const loginForm = () => {
-    return <LoginForm logIn={handleLogin} />;
-  };
+    return <LoginForm logIn={handleLogin} />
+  }
 
   return (
     <div>
       <h2>blogs</h2>
-      {notification()}
+      <Notification />
       {user !== null && (
         <div>
           <p>
@@ -154,7 +140,7 @@ const App = () => {
       <br />
       {user === null ? loginForm() : blogList()}
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
