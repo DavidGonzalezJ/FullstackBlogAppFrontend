@@ -1,18 +1,23 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Toggable'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { setMessageType } from './reducers/notificationTypeReducer'
+import {
+  initBlogs,
+  createBlog,
+  likeBlog,
+  removeBlog,
+} from './reducers/blogReducer'
+import BlogList from './components/BlogList'
 
 const App = () => {
   const dispatch = useDispatch()
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
 
   //This method changes and sets the notification
@@ -23,13 +28,8 @@ const App = () => {
     dispatch(setNotification(content, time))
   }
 
-  async function getBlogs() {
-    const blogs = await blogService.getAll()
-    setBlogs(blogs)
-  }
-
   useEffect(() => {
-    getBlogs()
+    dispatch(initBlogs())
   }, [])
 
   useEffect(() => {
@@ -56,25 +56,6 @@ const App = () => {
     }
   }
 
-  const handleLike = async (id) => {
-    try {
-      await blogService.like(id)
-      getBlogs()
-    } catch {
-      showNotification('error', 'Could not process like', 3)
-    }
-  }
-
-  const handleDelete = async (id) => {
-    try {
-      await blogService.deleteBlog(id)
-      getBlogs()
-      showNotification('notif', 'Blog deleted successfully', 3)
-    } catch {
-      showNotification('error', 'Could not delete the blog', 3)
-    }
-  }
-
   const handleLogout = async (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBlogappUser')
@@ -84,6 +65,19 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
+    dispatch(createBlog(blogObject))
+  }
+
+  const handleLike = (id) => {
+    dispatch(likeBlog(id))
+  }
+
+  const handleDelete = (id) => {
+    dispatch(removeBlog(id))
+  }
+
   const blogForm = () => {
     return (
       <Togglable buttonLabel="New Blog" ref={blogFormRef}>
@@ -92,32 +86,8 @@ const App = () => {
     )
   }
 
-  const addBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      await blogService.create(blogObject)
-      getBlogs()
-      showNotification(
-        'notif',
-        `The blog ${blogObject.title} by ${blogObject.author} has been added`,
-        3,
-      )
-    } catch (exception) {
-      showNotification('notif', 'Could not post the blog!', 3)
-    }
-  }
-
-  const blogList = () => {
-    blogs.sort((a, b) => b.likes - a.likes)
-    return blogs.map((blog) => (
-      <Blog
-        key={blog.id}
-        blog={blog}
-        likeHandler={handleLike}
-        deleteHandler={handleDelete}
-        user={user}
-      />
-    ))
+  const blogList = (likeHandler, deleteHandler) => {
+    return <BlogList handleLike={likeHandler} handleDelete={deleteHandler} />
   }
 
   const loginForm = () => {
@@ -138,7 +108,7 @@ const App = () => {
       )}
       {user !== null && blogForm()}
       <br />
-      {user === null ? loginForm() : blogList()}
+      {user === null ? loginForm() : blogList(handleLike, handleDelete)}
     </div>
   )
 }
