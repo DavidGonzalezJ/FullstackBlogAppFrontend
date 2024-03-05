@@ -1,16 +1,15 @@
-import userService from '../services/users'
-import { useState, useEffect } from 'react'
+import { initUserList } from '../reducers/userListReducer'
+import { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const UserTable = () => {
-    const [users, setUsers] = useState([])
+    const users = useSelector(state => state.userList)
+    const dispatch = useDispatch()
 
-    const getlist = async() => {
-        const list = await userService.getAll()
-        setUsers(list)
-    }
-    //Had to do that middlestep because it caused errors otherwise
-    useEffect(() => {const initUsers = () => getlist()
-        initUsers()}, [])
+    //Had to make a middlestep to avoid a warning
+    useEffect(() => {const init = () => dispatch(initUserList())
+    init()}, [])
 
     return (
         <>
@@ -25,7 +24,7 @@ const UserTable = () => {
                 <tbody>
                     {users.map((user) => (
                     <tr key={user.id}>
-                        <td>{user.name}</td>
+                        <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
                         <td>{user.blogs.length}</td>
                     </tr>
                     ))}
