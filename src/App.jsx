@@ -5,6 +5,7 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Toggable'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import UserTable from './components/UserTable'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { setMessageType } from './reducers/notificationTypeReducer'
@@ -16,6 +17,11 @@ import {
   removeBlog,
 } from './reducers/blogReducer'
 import BlogList from './components/BlogList'
+import { BrowserRouter as Router,
+  Routes,
+  Route,
+  Link 
+} from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -97,8 +103,20 @@ const App = () => {
     return <LoginForm logIn={handleLogin} />
   }
 
+  const homeContent = () => {
+    if(user)
+      return (<>
+        {blogForm()}
+        <br />
+        {blogList(handleLike,handleDelete)}
+        </>
+    )
+    else
+      return loginForm()
+}
+
   return (
-    <div>
+    <Router>
       <h2>blogs</h2>
       <Notification />
       {user !== null && (
@@ -109,10 +127,12 @@ const App = () => {
           </p>
         </div>
       )}
-      {user !== null && blogForm()}
-      <br />
-      {user === null ? loginForm() : blogList(handleLike, handleDelete)}
-    </div>
+      <Routes>
+        <Route  path='/' element={homeContent()}/>
+        <Route  path='/users' element={<UserTable/>}/>
+
+      </Routes>
+    </Router>
   )
 }
 
