@@ -7,6 +7,7 @@ import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import UserTable from './components/UserTable'
 import User from './components/User'
+import BlogDetails from './components/BlogDetails'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { setMessageType } from './reducers/notificationTypeReducer'
@@ -18,11 +19,7 @@ import {
   removeBlog,
 } from './reducers/blogReducer'
 import BlogList from './components/BlogList'
-import { BrowserRouter as Router,
-  Routes,
-  Route,
-  Link 
-} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -105,16 +102,16 @@ const App = () => {
   }
 
   const homeContent = () => {
-    if(user)
-      return (<>
-        {blogForm()}
-        <br />
-        {blogList(handleLike,handleDelete)}
+    if (user)
+      return (
+        <>
+          {blogForm()}
+          <br />
+          {blogList(handleLike, handleDelete)}
         </>
-    )
-    else
-      return loginForm()
-}
+      )
+    else return loginForm()
+  }
 
   return (
     <Router>
@@ -129,10 +126,13 @@ const App = () => {
         </div>
       )}
       <Routes>
-        <Route  path='/' element={homeContent()}/>
-        <Route  path='/users' element={<UserTable/>}/>
-        <Route  path='/users/:id' element={<User/>}/>
-
+        <Route path="/" element={homeContent()} />
+        <Route path="/users" element={<UserTable />} />
+        <Route path="/users/:id" element={<User />} />
+        <Route
+          path="/blogs/:id"
+          element={<BlogDetails likeHandler={handleLike} />}
+        />
       </Routes>
     </Router>
   )

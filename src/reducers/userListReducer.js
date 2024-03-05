@@ -14,10 +14,10 @@ const userListSlice = createSlice({
 export const { setUserList } = userListSlice.actions
 
 export const initUserList = () => {
-    return async dispatch => {
-        const users = await usersService.getAll()
-        dispatch(setUserList(users))
-    }
+  return async (dispatch) => {
+    const users = await usersService.getAll()
+    dispatch(setUserList(users))
+  }
 }
 
 export default userListSlice.reducer

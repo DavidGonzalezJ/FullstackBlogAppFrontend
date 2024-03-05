@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   const [fullView, setfullView] = useState(false)
@@ -40,7 +41,10 @@ const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
 
   return (
     <div style={blogStyle} className="blog">
-      {blog.title} {blog.author}
+      <Link to={`/blogs/${blog.id}`}>
+        {blog.title}
+        {blog.author}
+      </Link>
       <button style={hideInFullView} onClick={toggleFullView} id="view-button">
         view
       </button>
