@@ -19,6 +19,7 @@ import {
   removeBlog,
 } from './reducers/blogReducer'
 import BlogList from './components/BlogList'
+import NavigationMenu from './components/NavigationMenu'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 const App = () => {
@@ -115,16 +116,9 @@ const App = () => {
 
   return (
     <Router>
+      <NavigationMenu handleLogout={handleLogout}/>
       <h2>blogs</h2>
       <Notification />
-      {user !== null && (
-        <div>
-          <p>
-            {user.name} logged in
-            <button onClick={handleLogout}>logout</button>
-          </p>
-        </div>
-      )}
       <Routes>
         <Route path="/" element={homeContent()} />
         <Route path="/users" element={<UserTable />} />
