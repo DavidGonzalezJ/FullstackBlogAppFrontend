@@ -20,16 +20,30 @@ const blogSlice = createSlice({
         ...blogToUpdate,
         likes: blogToUpdate.likes + 1,
       }
+      console.log(updatedBlog)
       return state.map((blog) => (blog.id !== id ? blog : updatedBlog))
     },
     deleteBlog(state, action) {
       const id = action.payload
       return state.filter((b) => b.id !== id)
     },
+    postComment(state, action) {
+      const id = action.payload.id
+      const comment = action.payload.comment
+
+      const blogToUpdate = state.find((b) => b.id === id)
+      const newComments = blogToUpdate.comments.concat(comment)
+      const updatedBlog = {
+        ...blogToUpdate,
+        comments: newComments,
+      }
+      return state.map((b) => (b.id !== id ? b : updatedBlog))
+    },
   },
 })
 
-export const { getBlogs, addBlog, like, deleteBlog } = blogSlice.actions
+export const { getBlogs, addBlog, like, deleteBlog, postComment } =
+  blogSlice.actions
 
 //This method changes and sets the notification
 //type and content in the store, the Notification
@@ -84,6 +98,23 @@ export const removeBlog = (id) => {
     } catch {
       showNotification(dispatch, 'error', 'Could not delete the blog', 3)
     }
+  }
+}
+
+export const comment = (id, content) => {
+  return async (dispatch) => {
+    /*try {*/
+    const comment = await blogService.addComment(id, content)
+    dispatch(postComment({ id, comment }))
+    showNotification(
+      dispatch,
+      'notif',
+      `Comment: ${comment.content} posted!`,
+      3,
+    )
+    /*} catch {
+      showNotification(dispatch, 'error', 'Could not post the comment', 3)
+    }*/
   }
 }
 

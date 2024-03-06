@@ -17,6 +17,7 @@ import {
   createBlog,
   likeBlog,
   removeBlog,
+  comment,
 } from './reducers/blogReducer'
 import BlogList from './components/BlogList'
 import NavigationMenu from './components/NavigationMenu'
@@ -86,6 +87,10 @@ const App = () => {
     dispatch(removeBlog(id))
   }
 
+  const handleComment = (id, content) => {
+    dispatch(comment(id, content))
+  }
+
   const blogForm = () => {
     return (
       <Togglable buttonLabel="New Blog" ref={blogFormRef}>
@@ -116,7 +121,7 @@ const App = () => {
 
   return (
     <Router>
-      <NavigationMenu handleLogout={handleLogout}/>
+      <NavigationMenu handleLogout={handleLogout} />
       <h2>blogs</h2>
       <Notification />
       <Routes>
@@ -125,7 +130,12 @@ const App = () => {
         <Route path="/users/:id" element={<User />} />
         <Route
           path="/blogs/:id"
-          element={<BlogDetails likeHandler={handleLike} />}
+          element={
+            <BlogDetails
+              likeHandler={handleLike}
+              commentHandler={handleComment}
+            />
+          }
         />
       </Routes>
     </Router>
