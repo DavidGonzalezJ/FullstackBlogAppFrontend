@@ -23,6 +23,11 @@ const BlogDetails = ({ likeHandler }) => {
         </button>
       </p>
       {blog.user && <p>added by {blog.user.name}</p>}
+      <h3>comments</h3>
+      <ul>
+        {blog.comments.map(c => 
+          <li key={c.id}>{c.content}</li>)}
+      </ul>
     </>
   )
 }
