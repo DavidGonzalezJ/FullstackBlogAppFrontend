@@ -2,6 +2,7 @@ import { initUserList } from '../reducers/userListReducer'
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Table } from 'react-bootstrap'
 
 const UserTable = () => {
   const users = useSelector((state) => state.userList)
@@ -16,7 +17,7 @@ const UserTable = () => {
   return (
     <>
       <h2>Users</h2>
-      <table>
+      <Table striped={true}>
         <thead>
           <tr>
             <th></th>
@@ -33,7 +34,7 @@ const UserTable = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </>
   )
 }

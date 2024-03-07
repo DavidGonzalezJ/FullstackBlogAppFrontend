@@ -1,5 +1,6 @@
 //import { useState, forwardRef, useImperativeHandle } from "react";
 import { useSelector } from 'react-redux'
+import { Alert } from 'react-bootstrap'
 
 const Notification = () => {
   const notification = useSelector((state) => state.notification)
@@ -7,7 +8,7 @@ const Notification = () => {
 
   if (notification === '') return null
 
-  let messageStyle = {
+  /*let messageStyle = {
     color: 'green',
     background: 'lightgrey',
     fontSize: 20,
@@ -18,13 +19,17 @@ const Notification = () => {
   }
   if (notificationType === 'error') {
     messageStyle.color = 'red'
-  }
+  }*/
 
-  return (
+  if (notificationType === 'error')
+    return <Alert variant="danger">{notification}</Alert>
+
+  return <Alert variant="success">{notification}</Alert>
+  /*return (
     <div id="notification" style={messageStyle}>
       {notification}
     </div>
-  )
+  )*/
 }
 
 export default Notification

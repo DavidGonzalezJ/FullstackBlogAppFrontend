@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 
 const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   const [fullView, setfullView] = useState(false)
@@ -13,13 +14,13 @@ const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
     setfullView(!fullView)
   }
 
-  const blogStyle = {
+  /*const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  }
+  }*/
 
   const deleteButtonStyle = {
     backgroundColor: 'red',
@@ -40,37 +41,52 @@ const Blog = ({ blog, likeHandler, deleteHandler, user }) => {
   }
 
   return (
-    <div style={blogStyle} className="blog">
-      <Link to={`/blogs/${blog.id}`}>
-        {blog.title}
-        {blog.author}
-      </Link>
-      <button style={hideInFullView} onClick={toggleFullView} id="view-button">
-        view
-      </button>
-      <button style={showInFullView} onClick={toggleFullView} id="hide-button">
-        hide
-      </button>
-      <div style={showInFullView} className="blogDetails">
-        {blog.url}
-        <br />
-        likes {blog.likes}{' '}
-        <button
-          style={showInFullView}
-          id="like-button"
-          onClick={thisLikeHandler}
+    <tr className="blog" key={blog.id}>
+      <td>
+        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+        <div style={showInFullView} className="blogDetails">
+          {blog.url}
+          <br />
+          likes {blog.likes}{' '}
+          <Button
+            style={showInFullView}
+            id="like-button"
+            onClick={thisLikeHandler}
+          >
+            like
+          </Button>{' '}
+          <br />
+          {blog.user && blog.user.name} <br />
+          {showDeleteButton && (
+            <Button
+              variant="primary"
+              style={deleteButtonStyle}
+              onClick={thisDeleteHandler}
+            >
+              remove
+            </Button>
+          )}
+        </div>
+      </td>
+      <td>{blog.author}</td>
+      <td>
+        <Button
+          style={hideInFullView}
+          onClick={toggleFullView}
+          id="view-button"
         >
-          like
-        </button>{' '}
-        <br />
-        {blog.user && blog.user.name} <br />
-        {showDeleteButton && (
-          <button style={deleteButtonStyle} onClick={thisDeleteHandler}>
-            remove
-          </button>
-        )}
-      </div>
-    </div>
+          view
+        </Button>
+        <Button
+          variant="secondary"
+          style={showInFullView}
+          onClick={toggleFullView}
+          id="hide-button"
+        >
+          hide
+        </Button>
+      </td>
+    </tr>
   )
 }
 

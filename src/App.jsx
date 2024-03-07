@@ -120,25 +120,27 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <NavigationMenu handleLogout={handleLogout} />
-      <h2>blogs</h2>
-      <Notification />
-      <Routes>
-        <Route path="/" element={homeContent()} />
-        <Route path="/users" element={<UserTable />} />
-        <Route path="/users/:id" element={<User />} />
-        <Route
-          path="/blogs/:id"
-          element={
-            <BlogDetails
-              likeHandler={handleLike}
-              commentHandler={handleComment}
-            />
-          }
-        />
-      </Routes>
-    </Router>
+    <div className="container">
+      <Router>
+        <NavigationMenu handleLogout={handleLogout} />
+        <h2>blogs</h2>
+        <Notification />
+        <Routes>
+          <Route path="/" element={homeContent()} />
+          <Route path="/users" element={<UserTable />} />
+          <Route path="/users/:id" element={<User />} />
+          <Route
+            path="/blogs/:id"
+            element={
+              <BlogDetails
+                likeHandler={handleLike}
+                commentHandler={handleComment}
+              />
+            }
+          />
+        </Routes>
+      </Router>
+    </div>
   )
 }
 
